@@ -1,0 +1,42 @@
+import pandas as pd
+import yfinance as yf
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Download historical stock price data for Amazon (AMZN)
+ticker = "AMZN"
+data = yf.download(ticker, start="2015-01-01", end="2023-01-01")
+
+# Plot the adjusted close price
+plt.figure(figsize=(14, 7))
+plt.plot(data['Adj Close'], label='AMZN Adjusted Close Price')
+plt.title(f'{ticker} Stock Price')
+plt.xlabel('Date')
+plt.ylabel('Adjusted Close Price (USD)')
+plt.legend()
+plt.show()
+
+# Decompose the time series to observe trend, seasonality, and residuals
+decomposition = seasonal_decompose(data['Adj Close'], model='multiplicative', period=365)
+
+# Plot the decomposed components
+plt.figure(figsize=(14, 10))
+
+plt.subplot(411)
+plt.plot(decomposition.observed, label='Observed')
+plt.legend(loc='upper left')
+
+plt.subplot(412)
+plt.plot(decomposition.trend, label='Trend', color='orange')
+plt.legend(loc='upper left')
+
+plt.subplot(413)
+plt.plot(decomposition.seasonal, label='Seasonality', color='green')
+plt.legend(loc='upper left')
+
+plt.subplot(414)
+plt.plot(decomposition.resid, label='Residuals', color='red')
+plt.legend(loc='upper left')
+
+plt.tight_layout()
+plt.show()
